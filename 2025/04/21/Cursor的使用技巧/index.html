@@ -1,0 +1,748 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhengChaLei">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="总结 先拿 Deepseek 之类的模型把需求和流程捋出来。 把项目结构使用 Cursor 先分析出来， 写道 README.md 中。 Rule 是用来描述项目边界和限制的， 例如使用的框架，UI 设计， 编码习惯， 注释习惯。 每次提问前 一定要加上 @Rule + @README.md ， 不然他容易忽略。  他人经验1.使用时间选择：晚上九点左右 AI 最难用，尽量选择其他时间；后半夜和早">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cursor的使用技巧">
+<meta property="og:url" content="https://zhengchalei.github.io/2025/04/21/Cursor%E7%9A%84%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/index.html">
+<meta property="og:site_name" content="郑查磊">
+<meta property="og:description" content="总结 先拿 Deepseek 之类的模型把需求和流程捋出来。 把项目结构使用 Cursor 先分析出来， 写道 README.md 中。 Rule 是用来描述项目边界和限制的， 例如使用的框架，UI 设计， 编码习惯， 注释习惯。 每次提问前 一定要加上 @Rule + @README.md ， 不然他容易忽略。  他人经验1.使用时间选择：晚上九点左右 AI 最难用，尽量选择其他时间；后半夜和早">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-21T15:45:50.000Z">
+<meta property="article:modified_time" content="2025-08-13T05:51:35.950Z">
+<meta property="article:author" content="ZhengChaLei">
+<meta property="article:tag" content="Cursor">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Cursor的使用技巧 - 郑查磊</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zhengchalei.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3febe9df0ed325051aef878c004822e5","google":null,"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":null,"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3febe9df0ed325051aef878c004822e5";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  <style>ins.adsbygoogle[data-ad-status="unfilled"] { display: none !important; }</style>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ZhengChalei</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Cursor的使用技巧"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-04-21 23:45" pubdate>
+          2025年4月21日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+<aside class="sidebar d-none d-xl-block" style="margin-right:-1rem;z-index:-1"><ins class="adsbygoogle" style="display:flex;justify-content:center;min-width:160px;max-width:300px;width:100%;height:600px;position:sticky;top:2rem" data-ad-client="ca-pub-xxxxxx" data-ad-slot="yyyyyy"></ins><script> (adsbygoogle = window.adsbygoogle || []).push({}); </script></aside>
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Cursor的使用技巧</h1>
+            
+              <p id="updated-time" class="note note-info" style="display: none">
+                
+                  
+                    本文最后更新于 2025-08-13T13:51:35+08:00
+                  
+                  
+
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>先拿 Deepseek 之类的模型把需求和流程捋出来。</li>
+<li>把项目结构使用 Cursor 先分析出来， 写道 README.md 中。</li>
+<li>Rule 是用来描述项目边界和限制的， 例如使用的框架，UI 设计， 编码习惯， 注释习惯。</li>
+<li>每次提问前 一定要加上 @Rule + @README.md ， 不然他容易忽略。</li>
+</ol>
+<h2 id="他人经验"><a href="#他人经验" class="headerlink" title="他人经验"></a>他人经验</h2><p>1.使用时间选择：晚上九点左右 AI 最难用，尽量选择其他时间；后半夜和早上上午效果较好。<br>2.沟通优先级：第一句话先明确告知需求 —— 不要直接修改代码，而是先阐述方案。<br>3.方案确认流程：看到方案后，再根据你的理解进一步调整方案。<br>4.多任务处理：同时创建多个文件夹、打开多个 Cursor ，让其并行处理项目，对比效果后选择最优方向。<br>5.额度顾虑说明：无需担心额度消耗，即使 500 额度用尽，仍有慢速额度可用（但效果与快速额度一样差）。<br>6.语音输入方案：通过手机语音输入法配合电脑 AHK 插件，实现手机语音录入需求，电脑端自动发送至 Cursor 。<br>7.代码生成等待：等待 AI 生成代码时可灵活处理其他事务（如 “在地上转圈”，比喻无需死守界面）。<br>8.结果校验：每次生成代码后，用 Cursor 中的 Google 模型进行检查。<br>9.模式选择建议：Agent 模式未必好用，普通模式有时更快捷，可灵活切换。<br>10.语音输入优势：借助第六条的语音输入功能，可像与朋友聊天一样自然表达需求，添加 “废话” 能帮助 AI 更精准理解意图。<br>11.重复额度提醒：再次强调无需担心额度用尽（重复第五条），过度顾虑可能导致 AI 生成质量下降，保持平常心。<br>12.Cursor 核心功能：Cursor 的 “fast” 和 “small” 模式是其特色，可快速向 AI 投喂当前项目的代码依赖关系和内容，使其理解并执行 IDE 操作（如询问某行代码位置，AI 可直接定位）。<br>13.大纲协作法：与常规建议一致，先将 AI 内容的大纲写入文件，并确保 AI 始终能访问该文件，便于上下文理解。</p>
+<p><a target="_blank" rel="noopener" href="https://www.v2ex.com/t/1126870#reply35">源于dreamkuo</a></p>
+<h2 id="部分-Rule-参考"><a href="#部分-Rule-参考" class="headerlink" title="部分 Rule 参考"></a>部分 Rule 参考</h2><h3 id="Fluter"><a href="#Fluter" class="headerlink" title="Fluter"></a>Fluter</h3><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><code class="hljs markdown">您是一名高级 Dart 程序员，具有 Flutter 框架的经验，并偏好干净的编程和设计模式。<br><br>生成符合基本原则和命名规范的代码、修正和重构。<br><br><span class="hljs-section">## 项目结构</span><br><br>采用GetX框架进行状态管理和路由导航。<br><br><span class="hljs-section">### 入口文件</span><br><br>主要入口点是@lib/main.dart，它初始化应用，配置主题，设置路由并启动应用。<br><br><span class="hljs-section">### 项目结构</span><br><br><span class="hljs-bullet">-</span> <span class="hljs-strong">**lib/app/modules/**</span> - 包含所有功能模块，每个模块都遵循GetX模式<br><span class="hljs-bullet">  -</span> 每个模块包含自己的控制器、视图和绑定<br><span class="hljs-bullet">  -</span> 例如：登录模块@lib/app/modules/login<br><span class="hljs-bullet">-</span> <span class="hljs-strong">**lib/app/routes/**</span> - 包含路由配置<br><span class="hljs-bullet">  -</span> @app<span class="hljs-emphasis">_routes.dart - 定义路由常量</span><br><span class="hljs-emphasis">  - @app_</span>pages.dart - 定义应用页面路由配置<br><span class="hljs-bullet">-</span> <span class="hljs-strong">**lib/app/services/**</span> - 包含应用服务，例如HTTP请求、存储服务等<br><span class="hljs-bullet">-</span> <span class="hljs-strong">**lib/app/data/**</span> - 数据模型和数据源<br><span class="hljs-bullet">-</span> <span class="hljs-strong">**lib/app/utils/**</span> - 通用工具类和辅助函数<br><br><span class="hljs-section">### 基本原则</span><br><br><span class="hljs-bullet">-</span> 所有代码和文档使用中文。<br><span class="hljs-bullet">-</span> 始终声明每个变量和函数的类型（参数和返回值）。<br><span class="hljs-bullet">  -</span> 避免使用任何类型（any）。<br><span class="hljs-bullet">  -</span> 创建必要的类型。<br><span class="hljs-bullet">-</span> 不要在函数内部留空行。<br><span class="hljs-bullet">-</span> 每个文件只导出一个。<br><br><span class="hljs-section">### 命名规范</span><br><br><span class="hljs-bullet">-</span> 类使用 PascalCase。<br><span class="hljs-bullet">-</span> 变量、函数和方法使用 camelCase。<br><span class="hljs-bullet">-</span> 文件和目录名称使用 underscores<span class="hljs-emphasis">_case。</span><br><span class="hljs-emphasis">- 环境变量使用 UPPERCASE。</span><br><span class="hljs-emphasis">  - 避免魔法数字，定义常量。</span><br><span class="hljs-emphasis">- 每个函数以动词开头。</span><br><span class="hljs-emphasis">- 布尔变量使用动词，例如：isLoading、hasError、canDelete 等。</span><br><span class="hljs-emphasis">- 使用完整单词而非缩写，并确保拼写正确。</span><br><span class="hljs-emphasis">  - 除了标准缩写，如 API、URL 等。</span><br><span class="hljs-emphasis">  - 除了众所周知的缩写：</span><br><span class="hljs-emphasis">    - i、j 用于循环</span><br><span class="hljs-emphasis">    - err 用于错误</span><br><span class="hljs-emphasis">    - ctx 用于上下文</span><br><span class="hljs-emphasis">    - req、res、next 用于中间件函数参数</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">### 函数</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 在此上下文中，函数的定义同样适用于方法。</span><br><span class="hljs-emphasis">- 编写短小的函数，功能单一。指令数少于 20 条。</span><br><span class="hljs-emphasis">- 用动词和其他内容命名函数。</span><br><span class="hljs-emphasis">  - 如果返回布尔值，使用 isX 或 hasX、canX 等。</span><br><span class="hljs-emphasis">  - 如果不返回任何内容，使用 executeX 或 saveX 等。</span><br><span class="hljs-emphasis">- 避免嵌套块：</span><br><span class="hljs-emphasis">  - 提前检查并返回。</span><br><span class="hljs-emphasis">  - 提取到工具函数中。</span><br><span class="hljs-emphasis">- 使用高阶函数（map、filter、reduce 等）来避免函数嵌套。</span><br><span class="hljs-emphasis">  - 对于简单函数（少于 3 条指令）使用箭头函数。</span><br><span class="hljs-emphasis">  - 对于非简单函数使用具名函数。</span><br><span class="hljs-emphasis">- 使用默认参数值，而不是检查 null 或 undefined。</span><br><span class="hljs-emphasis">- 通过 RO-RO 减少函数参数：</span><br><span class="hljs-emphasis">  - 使用对象传递多个参数。</span><br><span class="hljs-emphasis">  - 使用对象返回结果。</span><br><span class="hljs-emphasis">  - 为输入参数和输出声明必要的类型。</span><br><span class="hljs-emphasis">- 使用单一的抽象级别。</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">### 数据</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 不要滥用原始类型，将数据封装在复合类型中。</span><br><span class="hljs-emphasis">- 避免在函数中进行数据验证，使用具有内部验证的类。</span><br><span class="hljs-emphasis">- 优先使用不可变数据。</span><br><span class="hljs-emphasis">  - 对于不变的数据使用 readonly。</span><br><span class="hljs-emphasis">  - 对于不变的字面量使用 const。</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">### 类</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 遵循 SOLID 原则。</span><br><span class="hljs-emphasis">- 优先使用组合而非继承。</span><br><span class="hljs-emphasis">- 声明接口以定义契约。</span><br><span class="hljs-emphasis">- 编写小型类，功能单一。</span><br><span class="hljs-emphasis">  - 指令数少于 200。</span><br><span class="hljs-emphasis">  - 公共方法少于 10 个0 个。</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">### 异常</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 使用异常处理您不期望的错误。</span><br><span class="hljs-emphasis">- 如果捕获异常，应该是为了：</span><br><span class="hljs-emphasis">  - 修复预期的问题。</span><br><span class="hljs-emphasis">  - 添加上下文。</span><br><span class="hljs-emphasis">  - 否则，使用全局处理程序。</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">## 特定于 Flutter</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">### 基本原则</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 使用干净的架构。</span><br><span class="hljs-emphasis">  - 如果需要将代码组织为模块，请参见模块。</span><br><span class="hljs-emphasis">  - 如果需要将代码组织为控制器，请参见控制器。</span><br><span class="hljs-emphasis">  - 如果需要将代码组织为服务，请参见服务。</span><br><span class="hljs-emphasis">  - 如果需要将代码组织为存储库，请参见存储库。</span><br><span class="hljs-emphasis">  - 如果需要将代码组织为实体，请参见实体。</span><br><span class="hljs-emphasis">- 使用存储库模式进行数据持久化。</span><br><span class="hljs-emphasis">  - 如果需要缓存数据，请参见缓存。</span><br><span class="hljs-emphasis">- 使用控制器模式与 GetX 处理业务逻辑。</span><br><span class="hljs-emphasis">- 使用 GetX 管理状态。</span><br><span class="hljs-emphasis">  - 如果需要保持状态，请参见 keepAlive。</span><br><span class="hljs-emphasis">- 使用 GetX 管理 UI 状态。</span><br><span class="hljs-emphasis">- 控制器始终接受方法作为输入，并更新影响 UI 的 UI 状态。</span><br><span class="hljs-emphasis">- 使用扩展管理可重用代码。</span><br><span class="hljs-emphasis">- 使用 ThemeData 管理主题。</span><br><span class="hljs-emphasis">- 使用 AppLocalizations 管理翻译。</span><br><span class="hljs-emphasis">- 使用常量管理常量值。</span><br><span class="hljs-emphasis">- 当小部件树变得过深时，可能导致更长的构建时间和更高的内存使用。Flutter 需要遍历整个树来呈现 UI，因此更平坦的结构提高了效率。</span><br><span class="hljs-emphasis">- 更平坦的小部件结构使理解和修改代码更容易。可重用组件也促进了更好的代码组织。</span><br><span class="hljs-emphasis">- 避免在 Flutter 中深度嵌套小部件。深度嵌套的小部件可能会对 Flutter 应用的可读性、可维护性和性能产生负面影响。旨在将复杂的小部件树拆分为更小的可重用组件。这不仅使您的代码更清晰，还通过减少构建复杂性来增强性能。</span><br><span class="hljs-emphasis">- 深度嵌套的小部件可能使状态管理变得更加困难。通过保持树的扁平化，更容易管理状态并在小部件之间传递数据。</span><br><span class="hljs-emphasis">- 将大型小部件拆分为更小、更专注的小部件。</span><br><span class="hljs-emphasis">- 尽可能使用 const 构造函数以减少重建次数。</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">### 性能优化</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 在可能的情况下使用 const 组件以优化重建。</span><br><span class="hljs-emphasis">- 实现列表视图优化（例如：ListView.builder）。</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">### UI 和样式</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 遵循iOS 18风格的现代化设计，保持简洁、直观的用户界面</span><br><span class="hljs-emphasis">  - 使用大标题和充足的留白营造清晰的视觉层次</span><br><span class="hljs-emphasis">  - 采用圆角设计（边框半径通常为10-12px）</span><br><span class="hljs-emphasis">  - 实现半透明效果和模糊背景（使用BackdropFilter组件）</span><br><span class="hljs-emphasis">  - 简约的图标设计和精简的视觉元素</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 色彩系统</span><br><span class="hljs-emphasis">  - 主色：使用@main.dart中定义的颜色常量</span><br><span class="hljs-emphasis">  - 亮色模式下使用明亮、干净的背景色（浅灰色或白色）</span><br><span class="hljs-emphasis">  - 暗色模式下使用纯黑或深灰色背景，减少眼睛疲劳</span><br><span class="hljs-emphasis">  - 使用语义化颜色：成功(绿)、警告(黄)、错误(红)、信息(蓝)</span><br><span class="hljs-emphasis">  - 避免使用过多颜色，保持整体风格一致</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 字体和排版</span><br><span class="hljs-emphasis">  - 使用系统默认字体（SF Pro 或平台对应字体）</span><br><span class="hljs-emphasis">  - 标题使用较大字号和semibold粗细（fontSize: 20-24, fontWeight: FontWeight.w600）</span><br><span class="hljs-emphasis">  - 正文使用舒适阅读字号（fontSize: 16）</span><br><span class="hljs-emphasis">  - 次要信息使用较小字号（fontSize: 14）</span><br><span class="hljs-emphasis">  - 保持良好的行间距（height: 1.2-1.5）</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 组件设计</span><br><span class="hljs-emphasis">  - 按钮：使用填充式按钮为主操作，文本按钮为次要操作</span><br><span class="hljs-emphasis">  - 表单：输入框使用填充背景而非边框描边</span><br><span class="hljs-emphasis">  - 卡片：轻度投影和适当圆角，内容留有充足内边距</span><br><span class="hljs-emphasis">  - 列表：条目之间使用分隔线或适当间距区分</span><br><span class="hljs-emphasis">  - 对话框：居中显示，带有明显的取消和确认操作</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 交互设计</span><br><span class="hljs-emphasis">  - 实现流畅的过渡动画（页面切换、列表滑动）</span><br><span class="hljs-emphasis">  - 添加微妙的反馈动画（按钮按下状态、加载指示器）</span><br><span class="hljs-emphasis">  - 使用Hero动画实现共享元素转场</span><br><span class="hljs-emphasis">  - 加载状态使用进度指示器而非静态界面</span><br><span class="hljs-emphasis">  - 表单验证提供即时反馈</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 响应式布局</span><br><span class="hljs-emphasis">  - 使用MediaQuery或LayoutBuilder根据屏幕尺寸调整UI</span><br><span class="hljs-emphasis">  - 针对横竖屏方向提供不同布局</span><br><span class="hljs-emphasis">  - 使用Flexible和Expanded组件创建自适应布局</span><br><span class="hljs-emphasis">  - 避免硬编码尺寸，使用相对尺寸（如屏幕百分比）</span><br><span class="hljs-emphasis">  - 确保所有交互元素尺寸足够大（至少48x48px），便于触控</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">- 可访问性</span><br><span class="hljs-emphasis">  - 确保文本与背景的对比度足够高</span><br><span class="hljs-emphasis">  - 为图片和图标提供语义标签</span><br><span class="hljs-emphasis">  - 支持系统字体大小调整</span><br><span class="hljs-emphasis">  - 交互元素需要有明确的焦点状态</span><br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Cursor/" class="print-no-link">#Cursor</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Cursor的使用技巧</div>
+      <div>https://zhengchalei.github.io/2025/04/21/Cursor的使用技巧/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhengChaLei</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年4月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+<div style="width:100%;display:flex;justify-content:center;margin-bottom:1.5rem"><ins class="adsbygoogle" style="display:flex;justify-content:center;max-width:845px;width:100%;height:90px" data-ad-client="ca-pub-xxxxxx" data-ad-slot="yyyyyy"></ins><script> (adsbygoogle = window.adsbygoogle || []).push({}); </script></div>
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/06/12/Spring-Boot-Mysql-SSL/" title="Spring Boot 配置 MySQL SSL 连接">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Spring Boot 配置 MySQL SSL 连接</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/04/03/JetBrains%20%E4%BA%A7%E5%93%81%E4%BD%BF%E7%94%A8%20ja-netfilter%20%E6%BF%80%E6%B4%BB%E6%8C%87%E5%8D%97/" title="JetBrains使用ja-netfilter">
+                        <span class="hidden-mobile">JetBrains使用ja-netfilter</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"a31d6f4444b05ddaea5e","clientSecret":"b8d683cc001df4fdf4f6d3c16740807b611bb8d6","repo":"zhengchalei.github.io","owner":"zhengchalei","admin":["zhengchalei"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'e19a1f3d8444927340b9b156a01c6586'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  var relativeDate = function() {
+    var updatedTime = document.getElementById('updated-time');
+    if (updatedTime) {
+      var text = updatedTime.textContent;
+      var reg = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})/;
+      var matchs = text.match(reg);
+      if (matchs) {
+        var relativeTime = moment(matchs[0]).fromNow();
+        updatedTime.textContent = text.replace(reg, relativeTime);
+      }
+      updatedTime.style.display = '';
+    }
+  };
+  Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/moment.min.js', function() {
+    if (!'zh-cn'.startsWith('en')) {
+      Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/locale/zh-cn.min.js', function() {
+        relativeDate();
+      });
+    } else {
+      relativeDate();
+    }
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1698240753235803" crossorigin="anonymous"></script>
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/jquery.js"></script>
+  <script defer src="/js/duration.js"></script>
+
+  <script defer src="/js/expried.js"></script>
+<!-- hexo injector body_end end --></body>
+</html>

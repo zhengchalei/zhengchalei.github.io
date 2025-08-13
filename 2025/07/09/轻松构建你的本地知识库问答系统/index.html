@@ -1,0 +1,863 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhengChaLei">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="各位同学，有没有遇到过这种情况？电脑里存了一堆文档、资料、笔记，想找个信息却要翻半天，最后还不一定能找到想要的答案……要是有个私人助手，能瞬间从你的文档库中找到精准答案就好了！ 别说，这事儿还真能实现！今天咱们就用大白话，聊聊最近很火的 RAG 技术，看看它怎么让你的文档”活”起来，变成一个会答题的智能助手。  RAG 是什么？为什么这么火？RAG，全称 Retrieval-Augmented G">
+<meta property="og:type" content="article">
+<meta property="og:title" content="轻松构建你的本地知识库问答系统">
+<meta property="og:url" content="https://zhengchalei.github.io/2025/07/09/%E8%BD%BB%E6%9D%BE%E6%9E%84%E5%BB%BA%E4%BD%A0%E7%9A%84%E6%9C%AC%E5%9C%B0%E7%9F%A5%E8%AF%86%E5%BA%93%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="郑查磊">
+<meta property="og:description" content="各位同学，有没有遇到过这种情况？电脑里存了一堆文档、资料、笔记，想找个信息却要翻半天，最后还不一定能找到想要的答案……要是有个私人助手，能瞬间从你的文档库中找到精准答案就好了！ 别说，这事儿还真能实现！今天咱们就用大白话，聊聊最近很火的 RAG 技术，看看它怎么让你的文档”活”起来，变成一个会答题的智能助手。  RAG 是什么？为什么这么火？RAG，全称 Retrieval-Augmented G">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-07-09T08:13:00.000Z">
+<meta property="article:modified_time" content="2025-08-13T05:51:35.951Z">
+<meta property="article:author" content="ZhengChaLei">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>轻松构建你的本地知识库问答系统 - 郑查磊</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zhengchalei.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3febe9df0ed325051aef878c004822e5","google":null,"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":null,"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3febe9df0ed325051aef878c004822e5";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  <style>ins.adsbygoogle[data-ad-status="unfilled"] { display: none !important; }</style>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ZhengChalei</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="轻松构建你的本地知识库问答系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-07-09 16:13" pubdate>
+          2025年7月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+<aside class="sidebar d-none d-xl-block" style="margin-right:-1rem;z-index:-1"><ins class="adsbygoogle" style="display:flex;justify-content:center;min-width:160px;max-width:300px;width:100%;height:600px;position:sticky;top:2rem" data-ad-client="ca-pub-xxxxxx" data-ad-slot="yyyyyy"></ins><script> (adsbygoogle = window.adsbygoogle || []).push({}); </script></aside>
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">轻松构建你的本地知识库问答系统</h1>
+            
+              <p id="updated-time" class="note note-info" style="display: none">
+                
+                  
+                    本文最后更新于 2025-08-13T13:51:35+08:00
+                  
+                  
+
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>各位同学，有没有遇到过这种情况？电脑里存了一堆文档、资料、笔记，想找个信息却要翻半天，最后还不一定能找到想要的答案……要是有个私人助手，能瞬间从你的文档库中找到精准答案就好了！</p>
+<p>别说，这事儿还真能实现！今天咱们就用大白话，聊聊最近很火的 RAG 技术，看看它怎么让你的文档”活”起来，变成一个会答题的智能助手。</p>
+<hr>
+<h3 id="RAG-是什么？为什么这么火？"><a href="#RAG-是什么？为什么这么火？" class="headerlink" title="RAG 是什么？为什么这么火？"></a><strong>RAG 是什么？为什么这么火？</strong></h3><p>RAG，全称 Retrieval-Augmented Generation（检索增强生成），听起来很高大上，其实就是**”先找资料，再回答问题”**的升级版。</p>
+<p>传统搜索是什么样？你输入关键词，它给你一堆链接，你还得自己点进去找答案。而 RAG 呢？它会：</p>
+<ol>
+<li><strong>理解你的问题</strong>：不只是匹配关键词，而是真正”懂”你在问什么</li>
+<li><strong>精准找资料</strong>：从你的文档库里找到最相关的内容片段</li>
+<li><strong>智能生成答案</strong>：结合找到的资料，给你一个完整、准确的回答</li>
+</ol>
+<p>这就像有个超级聪明的图书管理员，不仅知道每本书在哪儿，还能帮你总结出你想要的答案！</p>
+<p><strong>RAG 能解决什么实际问题？</strong></p>
+<ul>
+<li>企业知识库太庞大，员工找不到需要的信息</li>
+<li>个人文档太多太杂，想找个东西像大海捞针</li>
+<li>学习资料堆积如山，复习时找不到重点</li>
+<li>技术文档更新频繁，总是找不到最新的解决方案</li>
+</ul>
+<hr>
+<h3 id="RAG-的工作原理：像个聪明的图书管理员"><a href="#RAG-的工作原理：像个聪明的图书管理员" class="headerlink" title="RAG 的工作原理：像个聪明的图书管理员"></a><strong>RAG 的工作原理：像个聪明的图书管理员</strong></h3><p>想象一下，你走进一个超级智能的图书馆，这个图书管理员是怎么工作的：</p>
+<h4 id="1-文档预处理：把知识”切块”存储"><a href="#1-文档预处理：把知识”切块”存储" class="headerlink" title="1. 文档预处理：把知识”切块”存储"></a><strong>1. 文档预处理：把知识”切块”存储</strong></h4><p>首先，管理员会把所有的书籍、文档都<strong>切成小块</strong>，每一块包含一个完整的知识点。为什么要切块？因为：</p>
+<ul>
+<li>太长的文档，AI 处理不过来</li>
+<li>太短的片段，信息不完整</li>
+<li>合适的块大小，既保证信息完整，又便于检索</li>
+</ul>
+<p>就像把一本厚厚的技术手册，按章节、按主题分成一张张卡片。</p>
+<h4 id="2-向量化：让计算机”理解”文本含义"><a href="#2-向量化：让计算机”理解”文本含义" class="headerlink" title="2. 向量化：让计算机”理解”文本含义"></a><strong>2. 向量化：让计算机”理解”文本含义</strong></h4><p>接下来，管理员会给每张卡片贴上一个**”语义标签”**。这个标签不是简单的关键词，而是用数学向量来表示文本的含义。</p>
+<p>比如”机器学习”和”人工智能”这两个词，虽然字面不同，但在向量空间里它们会很接近，因为含义相关。</p>
+<p><strong>技术选择：</strong> 这里用的是 <a target="_blank" rel="noopener" href="https://github.com/zhengchalei/rag-demo"><code>shibing624/text2vec-base-chinese</code></a> 模型，专门为中文优化，理解中文语义更准确。</p>
+<h4 id="3-检索匹配：找到最相关的信息片段"><a href="#3-检索匹配：找到最相关的信息片段" class="headerlink" title="3. 检索匹配：找到最相关的信息片段"></a><strong>3. 检索匹配：找到最相关的信息片段</strong></h4><p>当你问问题时，系统会：</p>
+<ol>
+<li>把你的问题也转换成向量</li>
+<li>在向量数据库中找到最相似的文档片段</li>
+<li>返回最相关的几个候选答案</li>
+</ol>
+<p><strong>技术选择：</strong> 使用 <a target="_blank" rel="noopener" href="https://github.com/zhengchalei/rag-demo"><code>ChromaDB</code></a> 作为向量数据库，它的优势是：</p>
+<ul>
+<li>高性能的向量检索</li>
+<li>支持多种相似度计算方法</li>
+<li>易于部署和维护</li>
+</ul>
+<h4 id="4-重排序优化：精选最佳答案素材"><a href="#4-重排序优化：精选最佳答案素材" class="headerlink" title="4. 重排序优化：精选最佳答案素材"></a><strong>4. 重排序优化：精选最佳答案素材</strong></h4><p>找到候选答案后，还要进行一次**”精选”**。这就像图书管理员不只是找到相关的书，还要挑出最有用的那几本。</p>
+<p><strong>技术选择：</strong> 使用 <a target="_blank" rel="noopener" href="https://github.com/zhengchalei/rag-demo"><code>cross-encoder/mmarco-mMiniLMv2-L12-H384-v1</code></a> 重排序模型，它能：</p>
+<ul>
+<li>更精准地判断文档与问题的相关性</li>
+<li>支持多语言，中英文都能处理</li>
+<li>大幅提升最终答案的质量</li>
+</ul>
+<h4 id="5-生成回答：结合检索结果生成答案"><a href="#5-生成回答：结合检索结果生成答案" class="headerlink" title="5. 生成回答：结合检索结果生成答案"></a><strong>5. 生成回答：结合检索结果生成答案</strong></h4><p>最后，AI 会结合检索到的相关文档，生成一个完整、准确的回答。</p>
+<p><strong>技术选择：</strong> 使用 <a target="_blank" rel="noopener" href="https://github.com/zhengchalei/rag-demo"><code>Google Gemini 2.5 Flash</code></a> API，特点是：</p>
+<ul>
+<li>响应速度快，适合实时问答</li>
+<li>理解能力强，能很好地整合多个信息源</li>
+<li>成本相对较低，适合个人和小团队使用</li>
+</ul>
+<hr>
+<h3 id="技术栈选择：每个组件都有讲究"><a href="#技术栈选择：每个组件都有讲究" class="headerlink" title="技术栈选择：每个组件都有讲究"></a><strong>技术栈选择：每个组件都有讲究</strong></h3><p>构建一个好用的 RAG 系统，技术选型很关键。咱们这个项目的技术栈是这样搭配的：</p>
+<h4 id="文本向量化：为什么选择中文优化模型？"><a href="#文本向量化：为什么选择中文优化模型？" class="headerlink" title="文本向量化：为什么选择中文优化模型？"></a><strong>文本向量化：为什么选择中文优化模型？</strong></h4><p>普通的向量化模型对中文支持不够好，经常出现：</p>
+<ul>
+<li>中文分词不准确</li>
+<li>语义理解偏差</li>
+<li>检索效果不理想</li>
+</ul>
+<p>所以选择了专门针对中文优化的 <code>text2vec-base-chinese</code> 模型，让系统更”懂”中文。</p>
+<h4 id="向量数据库：ChromaDB-的优势"><a href="#向量数据库：ChromaDB-的优势" class="headerlink" title="向量数据库：ChromaDB 的优势"></a><strong>向量数据库：ChromaDB 的优势</strong></h4><p>相比其他向量数据库，ChromaDB 有这些优点：</p>
+<ul>
+<li><strong>轻量级</strong>：不需要复杂的部署，几行代码就能跑起来</li>
+<li><strong>高性能</strong>：检索速度快，支持大规模数据</li>
+<li><strong>易扩展</strong>：可以轻松添加新的文档和数据</li>
+</ul>
+<h4 id="重排序模型：提升答案质量的关键"><a href="#重排序模型：提升答案质量的关键" class="headerlink" title="重排序模型：提升答案质量的关键"></a><strong>重排序模型：提升答案质量的关键</strong></h4><p>很多人忽略了重排序这一步，但它真的很重要！没有重排序的 RAG 系统，经常会：</p>
+<ul>
+<li>返回相关但不准确的答案</li>
+<li>答案质量不稳定</li>
+<li>用户体验不好</li>
+</ul>
+<p>加上重排序后，答案质量能提升一个档次。</p>
+<h4 id="包管理工具：现代化的-Python-环境"><a href="#包管理工具：现代化的-Python-环境" class="headerlink" title="包管理工具：现代化的 Python 环境"></a><strong>包管理工具：现代化的 Python 环境</strong></h4><p>项目使用了 <a target="_blank" rel="noopener" href="https://github.com/zhengchalei/rag-demo"><code>UV</code></a> 作为包管理工具，相比传统的 pip：</p>
+<ul>
+<li><strong>速度更快</strong>：依赖安装速度提升数倍</li>
+<li><strong>更可靠</strong>：依赖解析更准确，避免版本冲突</li>
+<li><strong>更现代</strong>：支持现代 Python 开发最佳实践</li>
+</ul>
+<hr>
+<h3 id="实际应用场景：RAG-能帮你做什么"><a href="#实际应用场景：RAG-能帮你做什么" class="headerlink" title="实际应用场景：RAG 能帮你做什么"></a><strong>实际应用场景：RAG 能帮你做什么</strong></h3><p>RAG 不是什么高不可攀的技术，它就在我们身边，能解决很多实际问题：</p>
+<h4 id="1-企业知识库问答"><a href="#1-企业知识库问答" class="headerlink" title="1. 企业知识库问答"></a><strong>1. 企业知识库问答</strong></h4><ul>
+<li><strong>场景</strong>：公司有大量的技术文档、操作手册、FAQ</li>
+<li><strong>痛点</strong>：新员工找不到资料，老员工也记不住所有细节</li>
+<li><strong>解决</strong>：搭建企业 RAG 系统，员工随时可以问问题，立刻得到准确答案</li>
+</ul>
+<h4 id="2-个人文档助手"><a href="#2-个人文档助手" class="headerlink" title="2. 个人文档助手"></a><strong>2. 个人文档助手</strong></h4><ul>
+<li><strong>场景</strong>：个人电脑里有大量笔记、资料、收藏的文章</li>
+<li><strong>痛点</strong>：想找个信息要翻半天，有时候明明记得看过但就是找不到</li>
+<li><strong>解决</strong>：把所有文档导入 RAG 系统，变成你的私人知识助手</li>
+</ul>
+<h4 id="3-学习资料整理"><a href="#3-学习资料整理" class="headerlink" title="3. 学习资料整理"></a><strong>3. 学习资料整理</strong></h4><ul>
+<li><strong>场景</strong>：学生或自学者有大量的课件、教材、笔记</li>
+<li><strong>痛点</strong>：复习时找不到重点，知识点分散难以整合</li>
+<li><strong>解决</strong>：RAG 系统能快速找到相关知识点，还能帮你总结和串联</li>
+</ul>
+<h4 id="4-技术文档查询"><a href="#4-技术文档查询" class="headerlink" title="4. 技术文档查询"></a><strong>4. 技术文档查询</strong></h4><ul>
+<li><strong>场景</strong>：程序员需要查阅大量的 API 文档、技术手册</li>
+<li><strong>痛点</strong>：文档更新频繁，搜索功能不够智能</li>
+<li><strong>解决</strong>：构建技术文档 RAG 系统，快速找到最新、最准确的技术信息</li>
+</ul>
+<hr>
+<h3 id="总结：RAG-让知识触手可及"><a href="#总结：RAG-让知识触手可及" class="headerlink" title="总结：RAG 让知识触手可及"></a><strong>总结：RAG 让知识触手可及</strong></h3><p>一个小小的 RAG 系统，背后整合了文本理解、向量检索、智能生成等多项 AI 技术。它不只是个技术 demo，更是让知识真正为我们服务的工具。</p>
+<p><strong>RAG 的核心价值：</strong></p>
+<ol>
+<li><strong>降低信息获取成本</strong>：从”找资料”变成”问问题”</li>
+<li><strong>提升知识利用效率</strong>：让沉睡的文档变成活跃的知识库</li>
+<li><strong>增强决策支持能力</strong>：基于准确信息做出更好的决策</li>
+<li><strong>构建个人知识体系</strong>：让碎片化信息变成结构化知识</li>
+</ol>
+<p>技术在进步，但最终目的都是让我们的工作和学习更高效。RAG 就是这样一个实用的工具，它让我们与知识的距离更近了一步。</p>
+<p>想要体验 RAG 的魅力？不妨从这个 <a target="_blank" rel="noopener" href="https://github.com/zhengchalei/rag-demo">rag-demo</a> 项目开始，搭建属于你自己的智能知识库吧！</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Python/" class="print-no-link">#Python</a>
+      
+        <a href="/tags/LLM/" class="print-no-link">#LLM</a>
+      
+        <a href="/tags/AI/" class="print-no-link">#AI</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>轻松构建你的本地知识库问答系统</div>
+      <div>https://zhengchalei.github.io/2025/07/09/轻松构建你的本地知识库问答系统/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhengChaLei</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年7月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+<div style="width:100%;display:flex;justify-content:center;margin-bottom:1.5rem"><ins class="adsbygoogle" style="display:flex;justify-content:center;max-width:845px;width:100%;height:90px" data-ad-client="ca-pub-xxxxxx" data-ad-slot="yyyyyy"></ins><script> (adsbygoogle = window.adsbygoogle || []).push({}); </script></div>
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2025/07/13/Linux%E7%B3%BB%E7%BB%9F%E9%9F%B3%E9%87%8F%E8%B0%83%E8%8A%82%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5/" title="Linux系统音量调节原理与实践">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Linux系统音量调节原理与实践</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/07/09/%E5%90%8E%E6%82%94%E8%8D%AF%E6%97%B6%E9%97%B4%E5%88%B0%EF%BC%81Google%E9%82%A3%E4%B8%AA%E2%80%9C%E6%92%A4%E9%94%80%E2%80%9D%E6%8C%89%E9%92%AE%EF%BC%8C%E8%83%8C%E5%90%8E%E7%9A%84%E7%A7%98%E5%AF%86%E5%92%8C%E5%B0%8F%E5%BF%83%E6%80%9D/" title="后悔药时间到！Google那个“撤销”按钮，背后的秘密和小心思">
+                        <span class="hidden-mobile">后悔药时间到！Google那个“撤销”按钮，背后的秘密和小心思</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"a31d6f4444b05ddaea5e","clientSecret":"b8d683cc001df4fdf4f6d3c16740807b611bb8d6","repo":"zhengchalei.github.io","owner":"zhengchalei","admin":["zhengchalei"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: '399659005b8139aff30c26a0128813b9'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  var relativeDate = function() {
+    var updatedTime = document.getElementById('updated-time');
+    if (updatedTime) {
+      var text = updatedTime.textContent;
+      var reg = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})/;
+      var matchs = text.match(reg);
+      if (matchs) {
+        var relativeTime = moment(matchs[0]).fromNow();
+        updatedTime.textContent = text.replace(reg, relativeTime);
+      }
+      updatedTime.style.display = '';
+    }
+  };
+  Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/moment.min.js', function() {
+    if (!'zh-cn'.startsWith('en')) {
+      Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/locale/zh-cn.min.js', function() {
+        relativeDate();
+      });
+    } else {
+      relativeDate();
+    }
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1698240753235803" crossorigin="anonymous"></script>
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/jquery.js"></script>
+  <script defer src="/js/duration.js"></script>
+
+  <script defer src="/js/expried.js"></script>
+<!-- hexo injector body_end end --></body>
+</html>

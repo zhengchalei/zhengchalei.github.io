@@ -1,0 +1,779 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="ZhengChaLei">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Spring-Security-Multi-Tenant-Test需求: 多租户系统, 自定义 SpringSecurity 认证, 登录成功后返回用户信息, 在测试中, 可以使用MockUser 完成正常的获取租户信息  实现思路  自定义认证过滤器 TenantCaptchaAuthenticationFilter JWT Util, 获取Token 添加JWT拦截器, 过滤Token设置到C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring-Security-Multi-Tenant-Test">
+<meta property="og:url" content="https://zhengchalei.github.io/2024/08/16/Spring-Security-Multi-Tenant-Test/index.html">
+<meta property="og:site_name" content="郑查磊">
+<meta property="og:description" content="Spring-Security-Multi-Tenant-Test需求: 多租户系统, 自定义 SpringSecurity 认证, 登录成功后返回用户信息, 在测试中, 可以使用MockUser 完成正常的获取租户信息  实现思路  自定义认证过滤器 TenantCaptchaAuthenticationFilter JWT Util, 获取Token 添加JWT拦截器, 过滤Token设置到C">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-08-16T03:36:50.000Z">
+<meta property="article:modified_time" content="2025-08-13T05:51:35.951Z">
+<meta property="article:author" content="ZhengChaLei">
+<meta property="article:tag" content="SpringBoot">
+<meta property="article:tag" content="SpringSecurity">
+<meta property="article:tag" content="Tenant">
+<meta property="article:tag" content="Test">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Spring-Security-Multi-Tenant-Test - 郑查磊</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"zhengchalei.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"3febe9df0ed325051aef878c004822e5","google":null,"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":null,"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3febe9df0ed325051aef878c004822e5";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  <style>ins.adsbygoogle[data-ad-status="unfilled"] { display: none !important; }</style>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>ZhengChalei</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Spring-Security-Multi-Tenant-Test"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-16 11:36" pubdate>
+          2024年8月16日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+<aside class="sidebar d-none d-xl-block" style="margin-right:-1rem;z-index:-1"><ins class="adsbygoogle" style="display:flex;justify-content:center;min-width:160px;max-width:300px;width:100%;height:600px;position:sticky;top:2rem" data-ad-client="ca-pub-xxxxxx" data-ad-slot="yyyyyy"></ins><script> (adsbygoogle = window.adsbygoogle || []).push({}); </script></aside>
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Spring-Security-Multi-Tenant-Test</h1>
+            
+              <p id="updated-time" class="note note-info" style="display: none">
+                
+                  
+                    本文最后更新于 2025-08-13T13:51:35+08:00
+                  
+                  
+
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Spring-Security-Multi-Tenant-Test"><a href="#Spring-Security-Multi-Tenant-Test" class="headerlink" title="Spring-Security-Multi-Tenant-Test"></a>Spring-Security-Multi-Tenant-Test</h1><p>需求: 多租户系统, 自定义 SpringSecurity 认证, 登录成功后返回用户信息, 在测试中, 可以使用MockUser 完成正常的获取租户信息</p>
+<blockquote>
+<p>实现思路</p>
+<ol>
+<li>自定义认证过滤器 TenantCaptchaAuthenticationFilter</li>
+<li>JWT Util, 获取Token</li>
+<li>添加JWT拦截器, 过滤Token设置到Content中</li>
+<li>设置自己 MockUser Annotation </li>
+<li>完成 MockUser Annotation WithSecurityContextFactory</li>
+</ol>
+</blockquote>
+<h3 id="SpringSecurityConfig"><a href="#SpringSecurityConfig" class="headerlink" title="SpringSecurityConfig"></a>SpringSecurityConfig</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper<br><span class="hljs-keyword">import</span> com.zhengchalei.service.sys.config.GlobalException<br><span class="hljs-keyword">import</span> org.springframework.beans.factory.<span class="hljs-keyword">annotation</span>.Value<br><span class="hljs-keyword">import</span> org.springframework.context.<span class="hljs-keyword">annotation</span>.Bean<br><span class="hljs-keyword">import</span> org.springframework.security.authentication.AuthenticationManager<br><span class="hljs-keyword">import</span> org.springframework.security.config.<span class="hljs-keyword">annotation</span>.authentication.configuration.AuthenticationConfiguration<br><span class="hljs-keyword">import</span> org.springframework.security.config.<span class="hljs-keyword">annotation</span>.method.configuration.EnableMethodSecurity<br><span class="hljs-keyword">import</span> org.springframework.security.config.<span class="hljs-keyword">annotation</span>.web.builders.HttpSecurity<br><span class="hljs-keyword">import</span> org.springframework.security.web.SecurityFilterChain<br><span class="hljs-keyword">import</span> org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Service<br><br><br><span class="hljs-meta">@Service</span><br><span class="hljs-meta">@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SpringSecurityConfig</span>(<br>    <span class="hljs-meta">@Value(<span class="hljs-string">&quot;\$&#123;spring.profiles.active&#125;&quot;</span>)</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> profile: String,<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> objectMapper: ObjectMapper,<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> tenantCaptchaAuthenticationProvider: TenantCaptchaAuthenticationProvider<br>) &#123;<br><br><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">securityFilterChain</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">        http: <span class="hljs-type">HttpSecurity</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">        jwtProvider: <span class="hljs-type">JwtProvider</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">        authenticationManager: <span class="hljs-type">AuthenticationManager</span></span></span><br><span class="hljs-params"><span class="hljs-function">    )</span></span>: SecurityFilterChain &#123;<br>        <span class="hljs-keyword">val</span> tenantCaptchaAuthenticationFilter = TenantCaptchaAuthenticationFilter()<br>        tenantCaptchaAuthenticationFilter.setAuthenticationManager(authenticationManager)<br>        <span class="hljs-keyword">return</span> http<br>            .addFilterBefore(<br>                JwtConfigurer.JwtAuthorizationFilter(jwtProvider),<br>                UsernamePasswordAuthenticationFilter::<span class="hljs-keyword">class</span>.java<br>            )<br>            .addFilterBefore(tenantCaptchaAuthenticationFilter, UsernamePasswordAuthenticationFilter::<span class="hljs-keyword">class</span>.java)<br>            .authenticationProvider(tenantCaptchaAuthenticationProvider)<br>            .authorizeHttpRequests &#123; authorize -&gt;<br><br>                <span class="hljs-comment">// favicon.ico</span><br>                authorize.requestMatchers(<span class="hljs-string">&quot;/favicon.ico&quot;</span>).permitAll()<br><br>                authorize.requestMatchers(<span class="hljs-string">&quot;/api/auth/login&quot;</span>).permitAll()<br>                authorize.requestMatchers(<span class="hljs-string">&quot;/api/auth/register&quot;</span>).permitAll()<br>                authorize.requestMatchers(<span class="hljs-string">&quot;/api/auth/captcha&quot;</span>).permitAll()<br>                <span class="hljs-comment">// dev</span><br>                <span class="hljs-keyword">if</span> (profile == <span class="hljs-string">&quot;dev&quot;</span> || profile == <span class="hljs-string">&quot;test&quot;</span>) &#123;<br>                    authorize.requestMatchers(<span class="hljs-string">&quot;/openapi.html&quot;</span>).permitAll()<br>                    authorize.requestMatchers(<span class="hljs-string">&quot;/openapi.yml&quot;</span>).permitAll()<br>                &#125;<br>                authorize.anyRequest().authenticated()<br>            &#125;<br>            .exceptionHandling &#123;<br>                it.authenticationEntryPoint &#123; request, response, authException -&gt;<br>                    response.sendError(<br>                        <span class="hljs-number">401</span>,<br>                        objectMapper.writeValueAsString(GlobalException.Error(authException.message ?: <span class="hljs-string">&quot;未登录&quot;</span>))<br>                    )<br>                &#125;<br>                it.accessDeniedHandler &#123; request, response, accessDeniedException -&gt;<br>                    response.sendError(<br>                        <span class="hljs-number">403</span>,<br>                        objectMapper.writeValueAsString(<br>                            GlobalException.Error(<br>                                accessDeniedException.message ?: <span class="hljs-string">&quot;无权限&quot;</span><br>                            )<br>                        )<br>                    )<br>                &#125;<br>            &#125;<br>            .sessionManagement &#123;<br>                it.disable()<br>            &#125;<br>            .csrf &#123;<br>                it.disable()<br>            &#125;<br>            .build()<br>    &#125;<br><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">authenticationManager</span><span class="hljs-params">(configuration: <span class="hljs-type">AuthenticationConfiguration</span>)</span></span>: AuthenticationManager &#123;<br>        <span class="hljs-keyword">return</span> configuration.authenticationManager<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="TenantCaptchaAuthenticationFilter"><a href="#TenantCaptchaAuthenticationFilter" class="headerlink" title="TenantCaptchaAuthenticationFilter"></a>TenantCaptchaAuthenticationFilter</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">import</span> jakarta.servlet.http.HttpServletRequest<br><span class="hljs-keyword">import</span> jakarta.servlet.http.HttpServletResponse<br><span class="hljs-keyword">import</span> org.springframework.security.core.Authentication<br><span class="hljs-keyword">import</span> org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TenantCaptchaAuthenticationFilter</span> : <span class="hljs-type">UsernamePasswordAuthenticationFilter</span>() &#123;<br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">attemptAuthentication</span><span class="hljs-params">(request: <span class="hljs-type">HttpServletRequest</span>, response: <span class="hljs-type">HttpServletResponse</span>)</span></span>: Authentication &#123;<br>        <span class="hljs-keyword">val</span> username = request.getParameter(<span class="hljs-string">&quot;username&quot;</span>)<br>        <span class="hljs-keyword">val</span> password = request.getParameter(<span class="hljs-string">&quot;password&quot;</span>)<br>        <span class="hljs-keyword">val</span> tenantId = request.getParameter(<span class="hljs-string">&quot;tenant&quot;</span>)<br>        <span class="hljs-keyword">val</span> captcha = request.getParameter(<span class="hljs-string">&quot;captcha&quot;</span>)<br><br>        <span class="hljs-keyword">val</span> authRequest = TenantCaptchaAuthenticationToken(<br>            username, password, tenantId, captcha<br>        )<br>        setDetails(request, authRequest)<br>        <span class="hljs-keyword">return</span> authenticationManager.authenticate(authRequest)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="TenantCaptchaAuthenticationProvider"><a href="#TenantCaptchaAuthenticationProvider" class="headerlink" title="TenantCaptchaAuthenticationProvider"></a>TenantCaptchaAuthenticationProvider</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><br><span class="hljs-keyword">import</span> com.zhengchalei.service.sys.config.*<br><span class="hljs-keyword">import</span> com.zhengchalei.service.sys.domain.SysTenant<br><span class="hljs-keyword">import</span> com.zhengchalei.service.sys.domain.code<br><span class="hljs-keyword">import</span> com.zhengchalei.service.sys.domain.id<br><span class="hljs-keyword">import</span> com.zhengchalei.service.sys.repository.SysTenantRepository<br><span class="hljs-keyword">import</span> com.zhengchalei.service.sys.repository.SysUserRepository<br><span class="hljs-keyword">import</span> org.babyfish.jimmer.sql.kt.ast.expression.eq<br><span class="hljs-keyword">import</span> org.springframework.security.authentication.AuthenticationProvider<br><span class="hljs-keyword">import</span> org.springframework.security.core.Authentication<br><span class="hljs-keyword">import</span> org.springframework.security.core.GrantedAuthority<br><span class="hljs-keyword">import</span> org.springframework.security.core.authority.SimpleGrantedAuthority<br><span class="hljs-keyword">import</span> org.springframework.security.core.userdetails.User<br><span class="hljs-keyword">import</span> org.springframework.security.core.userdetails.UserDetails<br><span class="hljs-keyword">import</span> org.springframework.security.crypto.password.PasswordEncoder<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Component<br><br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TenantCaptchaAuthenticationProvider</span>(<br><span class="hljs-keyword">val</span> sysTenantRepository: SysTenantRepository,<br><span class="hljs-keyword">val</span> sysUserRepository: SysUserRepository,<br><span class="hljs-keyword">val</span> passwordEncoder: PasswordEncoder,<br>) : AuthenticationProvider &#123;<br><br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">authenticate</span><span class="hljs-params">(authentication: <span class="hljs-type">Authentication</span>)</span></span>: Authentication &#123;<br>        <span class="hljs-keyword">val</span> username = authentication.name<br>        <span class="hljs-keyword">val</span> password = authentication.credentials <span class="hljs-keyword">as</span> String<br>        <span class="hljs-keyword">val</span> tenant = (authentication <span class="hljs-keyword">as</span> TenantCaptchaAuthenticationToken).tenant<br>        <span class="hljs-keyword">val</span> captcha = authentication.captcha<br>        <span class="hljs-comment">// 验证租户ID、验证码和用户密码的逻辑</span><br>        <span class="hljs-keyword">if</span> (isValidTenant(tenant) &amp;&amp; isValidCaptcha(captcha)) &#123;<br>            <span class="hljs-keyword">val</span> userDetails = loadUserByUsername(username, password, tenant)<br>            <span class="hljs-keyword">return</span> TenantCaptchaAuthenticationToken(username, password, tenant, captcha, userDetails.authorities)<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">throw</span> UserPasswordErrorException()<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">supports</span><span class="hljs-params">(authentication: <span class="hljs-type">Class</span>&lt;*&gt;)</span></span>: <span class="hljs-built_in">Boolean</span> &#123;<br>        <span class="hljs-keyword">return</span> TenantCaptchaAuthenticationToken::<span class="hljs-keyword">class</span>.java.isAssignableFrom(authentication)<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">isValidTenant</span><span class="hljs-params">(tenant: <span class="hljs-type">String</span>)</span></span>: <span class="hljs-built_in">Boolean</span> &#123;<br>        <span class="hljs-comment">// 这里实现租户ID验证逻辑</span><br>        <span class="hljs-keyword">this</span>.sysTenantRepository.sql.createQuery(SysTenant::<span class="hljs-keyword">class</span>) &#123;<br>            <span class="hljs-keyword">where</span>(table.code eq tenant)<br>            select(table.id)<br>        &#125;.fetchOneOrNull() ?: <span class="hljs-keyword">throw</span> TenantNotFoundException()<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span><br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">isValidCaptcha</span><span class="hljs-params">(captcha: <span class="hljs-type">String</span>)</span></span>: <span class="hljs-built_in">Boolean</span> &#123;<br>        <span class="hljs-comment">// TODO 这里实现验证码验证逻辑</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> ?: <span class="hljs-keyword">throw</span> CaptchaErrorException()<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">loadUserByUsername</span><span class="hljs-params">(username: <span class="hljs-type">String</span>, password: <span class="hljs-type">String</span>, tenant: <span class="hljs-type">String</span>)</span></span>: UserDetails &#123;<br>        <span class="hljs-keyword">val</span> user = sysUserRepository.findByUsernameAndTenant(username, tenant) ?: <span class="hljs-keyword">throw</span> UserNotFoundException()<br>        <span class="hljs-keyword">if</span> (!user.status) <span class="hljs-keyword">throw</span> UserDisabledException()<br>        <span class="hljs-keyword">if</span> (!passwordEncoder.matches(password, user.password)) <span class="hljs-keyword">throw</span> UserPasswordErrorException()<br>        <span class="hljs-keyword">val</span> authorityList = mutableListOf&lt;GrantedAuthority&gt;()<br>        <span class="hljs-keyword">val</span> roles = user.roles<br>        <span class="hljs-keyword">val</span> permissions = user.roles.flatMap &#123; it.permissions &#125;<br>        authorityList.addAll(permissions.map &#123; it.code &#125;.map &#123; SimpleGrantedAuthority(it) &#125;)<br>        authorityList.addAll(roles.map &#123; it.code &#125;.map &#123; <span class="hljs-string">&quot;ROLE_<span class="hljs-variable">$it</span>&quot;</span> &#125;.map &#123; SimpleGrantedAuthority(it) &#125;)<br>        <span class="hljs-keyword">return</span> User(username, user.password, user.status, <span class="hljs-literal">true</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">true</span>, authorityList)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="TenantCaptchaAuthenticationToken"><a href="#TenantCaptchaAuthenticationToken" class="headerlink" title="TenantCaptchaAuthenticationToken"></a>TenantCaptchaAuthenticationToken</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">import</span> org.springframework.security.authentication.UsernamePasswordAuthenticationToken<br><span class="hljs-keyword">import</span> org.springframework.security.core.GrantedAuthority<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TenantCaptchaAuthenticationToken</span>(<br>    username: Any,<br>    password: Any,<br>    <span class="hljs-keyword">val</span> tenant: String,<br>    <span class="hljs-keyword">val</span> captcha: String,<br>    authorities: Collection&lt;GrantedAuthority&gt; = emptyList()<br>) :<br>    UsernamePasswordAuthenticationToken(username, password, authorities)<br><br></code></pre></td></tr></table></figure>
+<h3 id="JwtTokenProvider"><a href="#JwtTokenProvider" class="headerlink" title="JwtTokenProvider"></a>JwtTokenProvider</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><br><span class="hljs-keyword">import</span> jakarta.servlet.FilterChain<br><span class="hljs-keyword">import</span> jakarta.servlet.http.HttpServletRequest<br><span class="hljs-keyword">import</span> jakarta.servlet.http.HttpServletResponse<br><span class="hljs-keyword">import</span> org.springframework.security.config.<span class="hljs-keyword">annotation</span>.SecurityConfigurerAdapter<br><span class="hljs-keyword">import</span> org.springframework.security.config.<span class="hljs-keyword">annotation</span>.web.builders.HttpSecurity<br><span class="hljs-keyword">import</span> org.springframework.security.core.Authentication<br><span class="hljs-keyword">import</span> org.springframework.security.core.context.SecurityContextHolder<br><span class="hljs-keyword">import</span> org.springframework.security.web.DefaultSecurityFilterChain<br><span class="hljs-keyword">import</span> org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter<br><span class="hljs-keyword">import</span> org.springframework.web.filter.OncePerRequestFilter<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">JwtConfigurer</span>(<span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> jwtProvider: JwtProvider) :<br>    SecurityConfigurerAdapter&lt;DefaultSecurityFilterChain, HttpSecurity&gt;() &#123;<br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">configure</span><span class="hljs-params">(http: <span class="hljs-type">HttpSecurity</span>)</span></span> &#123;<br>        <span class="hljs-comment">// 实例化 JwtFilter 拦截器, 将Token util bean 传递过来</span><br>        <span class="hljs-keyword">val</span> customFilter = JwtAuthorizationFilter(jwtProvider)<br>        <span class="hljs-comment">// 将这个 jwt filter 配置在 UsernamePasswordAuthenticationFilter.class 之前</span><br>        http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter::<span class="hljs-keyword">class</span>.java)<br>    &#125;<br><br><br>    <span class="hljs-keyword">class</span> <span class="hljs-title class_">JwtAuthorizationFilter</span>(<span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> jwtProvider: JwtProvider) : OncePerRequestFilter() &#123;<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> AUTHORIZATION: String = <span class="hljs-string">&quot;Authorization&quot;</span><br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> ACCESS_TOKEN: String = <span class="hljs-string">&quot;access_token&quot;</span><br>        <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">doFilterInternal</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">            request: <span class="hljs-type">HttpServletRequest</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            response: <span class="hljs-type">HttpServletResponse</span>,</span></span><br><span class="hljs-params"><span class="hljs-function">            filterChain: <span class="hljs-type">FilterChain</span></span></span><br><span class="hljs-params"><span class="hljs-function">        )</span></span> &#123;<br>            <span class="hljs-comment">// 这里就是获取到token</span><br>            <span class="hljs-keyword">val</span> jwt: String? = resolveToken(request)<br>            <span class="hljs-comment">// 如果 jwt不为空 然后调用了 jwtUtil 效验了 token 是否有效</span><br>            <span class="hljs-keyword">if</span> (!jwt.isNullOrBlank() &amp;&amp; jwtProvider.validateToken(jwt)) &#123;<br>                <span class="hljs-comment">// 获取 Authentication</span><br>                <span class="hljs-keyword">val</span> authentication: Authentication = jwtProvider.getAuthentication(jwt)<br>                <span class="hljs-comment">// 将 认证信息重新set 到 security context 中</span><br>                SecurityContextHolder.getContext().authentication = authentication<br>            &#125;<br>            <span class="hljs-comment">// 拦截器继续执行,</span><br>            filterChain.doFilter(request, response)<br>        &#125;<br><br>        <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">resolveToken</span><span class="hljs-params">(request: <span class="hljs-type">HttpServletRequest</span>)</span></span>: String? &#123;<br>            <span class="hljs-comment">// 从头部信息拿到 Authorization 的内容</span><br>            <span class="hljs-keyword">val</span> bearerToken = request.getHeader(AUTHORIZATION)<br>            <span class="hljs-comment">// 如果 不为空, 且 Bearer 开头</span><br>            <span class="hljs-keyword">if</span> (!bearerToken.isNullOrBlank() &amp;&amp; bearerToken.startsWith(<span class="hljs-string">&quot;Bearer &quot;</span>)) &#123;<br>                <span class="hljs-comment">// 这里的 7 长度就是 &quot;Bearer &quot; 的长度</span><br>                <span class="hljs-keyword">return</span> bearerToken.substring(<span class="hljs-number">7</span>)<br>            &#125;<br><br>            <span class="hljs-keyword">val</span> accessToken = request.getParameter(ACCESS_TOKEN)<br>            <span class="hljs-keyword">if</span> (!accessToken.isNullOrBlank()) &#123;<br>                <span class="hljs-keyword">return</span> accessToken<br>            &#125;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span><br>        &#125;<br><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="JwtProvider"><a href="#JwtProvider" class="headerlink" title="JwtProvider"></a>JwtProvider</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><br><span class="hljs-keyword">import</span> com.nimbusds.jose.JOSEException<br><span class="hljs-keyword">import</span> com.nimbusds.jose.JWSAlgorithm<br><span class="hljs-keyword">import</span> com.nimbusds.jose.JWSHeader<br><span class="hljs-keyword">import</span> com.nimbusds.jose.crypto.MACSigner<br><span class="hljs-keyword">import</span> com.nimbusds.jose.crypto.MACVerifier<br><span class="hljs-keyword">import</span> com.nimbusds.jwt.JWTClaimsSet<br><span class="hljs-keyword">import</span> com.nimbusds.jwt.SignedJWT<br><span class="hljs-keyword">import</span> com.zhengchalei.service.sys.repository.SysDictRepository<br><span class="hljs-keyword">import</span> org.slf4j.LoggerFactory<br><span class="hljs-keyword">import</span> org.springframework.boot.CommandLineRunner<br><span class="hljs-keyword">import</span> org.springframework.security.core.Authentication<br><span class="hljs-keyword">import</span> org.springframework.security.core.authority.SimpleGrantedAuthority<br><span class="hljs-keyword">import</span> org.springframework.security.core.userdetails.User<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Component<br><span class="hljs-keyword">import</span> java.util.*<br><br><br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">JwtProvider</span>(<span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> dictRepository: SysDictRepository) : CommandLineRunner &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">val</span> logger = LoggerFactory.getLogger(JwtProvider::<span class="hljs-keyword">class</span>.java)<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> secret: ByteArray = <span class="hljs-string">&quot;zhengchalei.github.io&quot;</span>.toByteArray(Charsets.UTF_8)<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> expiration: <span class="hljs-built_in">Long</span> = <span class="hljs-number">3600L</span><br><br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">run</span><span class="hljs-params">(<span class="hljs-keyword">vararg</span> args: <span class="hljs-type">String</span>)</span></span> &#123;<br>        <span class="hljs-keyword">val</span> dict = <span class="hljs-keyword">this</span>.dictRepository.findByCode(<span class="hljs-string">&quot;jwt&quot;</span>)<br>        <span class="hljs-keyword">val</span> dictItems = dict?.dictItems ?: emptyList()<br>        <span class="hljs-comment">// 获取 secret</span><br>        <span class="hljs-keyword">val</span> secret = dictItems.find &#123; it.code == <span class="hljs-string">&quot;secret&quot;</span> &#125;<br>        <span class="hljs-comment">// 获取 expired</span><br>        <span class="hljs-keyword">val</span> expired = dictItems.find &#123; it.code == <span class="hljs-string">&quot;expired&quot;</span> &#125;<br><br>        <span class="hljs-keyword">when</span> &#123;<br>            secret == <span class="hljs-literal">null</span> -&gt; &#123;<br>                logger.error(<span class="hljs-string">&quot;JWT 参数初始化失败, 缺少 &#x27;secret&#x27;, 正在使用默认值: 危险&quot;</span>)<br>                <span class="hljs-keyword">this</span>.secret = <span class="hljs-string">&quot;default-secret&quot;</span>.toByteArray(Charsets.UTF_8)<br>            &#125;<br><br>            secret.<span class="hljs-keyword">data</span>.toByteArray(Charsets.UTF_8).size &lt; <span class="hljs-number">32</span> -&gt; &#123;<br>                logger.error(<span class="hljs-string">&quot;JWT 参数错误, &#x27;secret&#x27; 必须大于 32 个字符, 正在使用默认值: 危险&quot;</span>)<br>            &#125;<br><br>            <span class="hljs-keyword">else</span> -&gt; &#123;<br>                <span class="hljs-keyword">this</span>.secret = secret.<span class="hljs-keyword">data</span>.toByteArray(Charsets.UTF_8)<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">when</span> &#123;<br>            expired == <span class="hljs-literal">null</span> -&gt; &#123;<br>                logger.warn(<span class="hljs-string">&quot;JWT 参数初始化失败, 缺少 &#x27;expired&#x27;&quot;</span>)<br>                <span class="hljs-keyword">this</span>.expiration = <span class="hljs-number">3600L</span> <span class="hljs-comment">// 默认过期时间为 1 小时</span><br>            &#125;<br><br>            expired.<span class="hljs-keyword">data</span>.toLong() &lt; <span class="hljs-number">0</span> -&gt; &#123;<br>                logger.warn(<span class="hljs-string">&quot;JWT 参数初始化错误, &#x27;expired&#x27; 必须大于 0 , 正在使用默认值: 危险&quot;</span>)<br>            &#125;<br><br>            <span class="hljs-keyword">else</span> -&gt; &#123;<br>                <span class="hljs-keyword">this</span>.expiration = expired.<span class="hljs-keyword">data</span>.toLong() * <span class="hljs-number">1000</span> <span class="hljs-comment">// 转换为毫秒</span><br>            &#125;<br>        &#125;<br><br>        logger.info(<span class="hljs-string">&quot;jwt 参数初始化完毕&quot;</span>)<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 创建一个 JWT。</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> 签名后的 JWT 对象</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@throws</span> JOSEException 如果签名过程中出现错误</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">createToken</span><span class="hljs-params">(authentication: <span class="hljs-type">TenantCaptchaAuthenticationToken</span>)</span></span>: String &#123;<br>        <span class="hljs-comment">// Header</span><br>        <span class="hljs-keyword">val</span> header = JWSHeader(JWSAlgorithm.HS256)<br><br>        <span class="hljs-comment">// Payload</span><br>        <span class="hljs-keyword">val</span> claimsSet = JWTClaimsSet.Builder()<br>            .subject(authentication.name)<br>            .claim(<span class="hljs-string">&quot;username&quot;</span>, authentication.name)<br>            .claim(<br>                <span class="hljs-string">&quot;roles&quot;</span>,<br>                authentication.authorities<br>                    .filter &#123; it.authority.startsWith(<span class="hljs-string">&quot;ROLE_&quot;</span>) &#125;<br>                    .map &#123; it.authority &#125;<br>                    .joinToString(<span class="hljs-string">&quot;,&quot;</span>)<br>            )<br>            .claim(<br>                <span class="hljs-string">&quot;permissions&quot;</span>,<br>                authentication.authorities<br>                    .filter &#123; !it.authority.startsWith(<span class="hljs-string">&quot;ROLE_&quot;</span>) &#125;<br>                    .map &#123; it.authority &#125;<br>                    .joinToString(<span class="hljs-string">&quot;,&quot;</span>)<br>            )<br>            .claim(<span class="hljs-string">&quot;tenant&quot;</span>, authentication.tenant)<br>            .expirationTime(Date(System.currentTimeMillis() + expiration)) <span class="hljs-comment">// 1 hour from now</span><br>            .build()<br><br>        <span class="hljs-keyword">val</span> signedJWT = SignedJWT(header, claimsSet)<br>        <span class="hljs-keyword">val</span> signer = MACSigner(secret)<br>        signedJWT.sign(signer)<br>        <span class="hljs-keyword">return</span> signedJWT.serialize()<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 解析一个 JWT 字符串。</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> token JWT 字符串</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> 解析后的 SignedJWT 对象</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">parseToken</span><span class="hljs-params">(token: <span class="hljs-type">String</span>)</span></span>: SignedJWT &#123;<br>        <span class="hljs-keyword">return</span> SignedJWT.parse(token)<br>    &#125;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 验证 JWT 是否有效。</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> token 签名后的 JWT 对象</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> 如果 JWT 有效则返回 true，否则返回 false</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">validateToken</span><span class="hljs-params">(token: <span class="hljs-type">String</span>)</span></span>: <span class="hljs-built_in">Boolean</span> &#123;<br>        <span class="hljs-keyword">val</span> jwt = parseToken(token)<br>        <span class="hljs-keyword">val</span> verifier = MACVerifier(secret)<br>        <span class="hljs-keyword">if</span> (!jwt.verify(verifier)) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span><br>        &#125;<br>        <span class="hljs-keyword">val</span> claimsSet = jwt.jwtClaimsSet<br>        <span class="hljs-keyword">return</span> !claimsSet.expirationTime.before(Date())<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getAuthentication</span><span class="hljs-params">(token: <span class="hljs-type">String</span>)</span></span>: Authentication &#123;<br>        <span class="hljs-keyword">val</span> jwt: SignedJWT = parseToken(token)<br>        <span class="hljs-keyword">val</span> jwtClaimsSet = jwt.jwtClaimsSet ?: <span class="hljs-keyword">throw</span> RuntimeException(<span class="hljs-string">&quot;JWT ClaimsSet is null&quot;</span>)<br>        <span class="hljs-keyword">val</span> permissions = jwtClaimsSet.getStringClaim(<span class="hljs-string">&quot;permissions&quot;</span>).split(<span class="hljs-string">&quot;,&quot;</span>)<br>        <span class="hljs-keyword">val</span> roles = jwtClaimsSet.getStringClaim(<span class="hljs-string">&quot;roles&quot;</span>).split(<span class="hljs-string">&quot;,&quot;</span>)<br>        <span class="hljs-keyword">val</span> tenant = jwtClaimsSet.getStringClaim(<span class="hljs-string">&quot;tenant&quot;</span>)<br><br>        <span class="hljs-comment">// 构建权限</span><br>        <span class="hljs-keyword">val</span> authorities = mutableListOf(permissions, roles).flatten().map &#123; SimpleGrantedAuthority(it) &#125;<br><br>        <span class="hljs-keyword">val</span> principal = User(jwtClaimsSet.subject, <span class="hljs-string">&quot;&quot;</span>, authorities)<br><br>        <span class="hljs-keyword">return</span> TenantCaptchaAuthenticationToken(<br>            username = principal,<br>            password = <span class="hljs-string">&quot;&quot;</span>,<br>            tenant = tenant,<br>            captcha = <span class="hljs-string">&quot;&quot;</span>,<br>            authorities = authorities<br>        )<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">getListClaimsSet</span><span class="hljs-params">(jwtClaimsSet: <span class="hljs-type">JWTClaimsSet</span>, key: <span class="hljs-type">String</span>)</span></span>: List&lt;String&gt; &#123;<br>        <span class="hljs-keyword">return</span> (jwtClaimsSet.getClaim(key) <span class="hljs-keyword">as</span> List&lt;*&gt;).map &#123; it <span class="hljs-keyword">as</span> String &#125;<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h2><h3 id="WithMockTenantUser"><a href="#WithMockTenantUser" class="headerlink" title="WithMockTenantUser"></a>WithMockTenantUser</h3><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">import</span> org.springframework.security.test.context.support.WithSecurityContext<br><br><span class="hljs-meta">@Retention(AnnotationRetention.RUNTIME)</span><br><span class="hljs-meta">@WithSecurityContext(factory = WithMockTenantUserSecurityContextFactory::class)</span><br><span class="hljs-keyword">annotation</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WithMockTenantUser</span>(<br>    <span class="hljs-keyword">val</span> username: String = <span class="hljs-string">&quot;admin&quot;</span>,<br>    <span class="hljs-keyword">val</span> name: String = <span class="hljs-string">&quot;超级管理员&quot;</span>,<br>    <span class="hljs-keyword">val</span> password: String = <span class="hljs-string">&quot;admin&quot;</span>,<br>    <span class="hljs-keyword">val</span> roles: Array&lt;String&gt; = [<span class="hljs-string">&quot;ADMIN&quot;</span>],<br>    <span class="hljs-keyword">val</span> authorities: Array&lt;String&gt; = [],<br>    <span class="hljs-keyword">val</span> tenant: String = <span class="hljs-string">&quot;default&quot;</span><br>)<br><br></code></pre></td></tr></table></figure>
+
+
+<figure class="highlight kotlin"><figcaption><span>WithMockTenantUserSecurityContextFactory</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">import</span> com.zhengchalei.service.sys.config.security.TenantCaptchaAuthenticationToken<br><span class="hljs-keyword">import</span> org.springframework.security.core.Authentication<br><span class="hljs-keyword">import</span> org.springframework.security.core.GrantedAuthority<br><span class="hljs-keyword">import</span> org.springframework.security.core.authority.SimpleGrantedAuthority<br><span class="hljs-keyword">import</span> org.springframework.security.core.context.SecurityContext<br><span class="hljs-keyword">import</span> org.springframework.security.core.context.SecurityContextHolder<br><span class="hljs-keyword">import</span> org.springframework.security.core.userdetails.User<br><span class="hljs-keyword">import</span> org.springframework.security.core.userdetails.UserDetails<br><span class="hljs-keyword">import</span> org.springframework.security.test.context.support.WithSecurityContextFactory<br><span class="hljs-keyword">import</span> java.util.*<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">WithMockTenantUserSecurityContextFactory</span><br><br>    : WithSecurityContextFactory&lt;WithMockTenantUser&gt; &#123;<br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">createSecurityContext</span><span class="hljs-params">(<span class="hljs-keyword">annotation</span>: <span class="hljs-type">WithMockTenantUser</span>)</span></span>: SecurityContext &#123;<br>        <span class="hljs-keyword">val</span> context = SecurityContextHolder.createEmptyContext()<br>        <span class="hljs-keyword">val</span> authorities: MutableList&lt;GrantedAuthority&gt; = ArrayList()<br>        authorities.addAll(Arrays.stream(<span class="hljs-keyword">annotation</span>.authorities)<br>            .map &#123; SimpleGrantedAuthority(it) &#125;<br>            .toList())<br>        authorities.addAll(Arrays.stream(<span class="hljs-keyword">annotation</span>.roles)<br>            .map &#123; <span class="hljs-string">&quot;ROLE_<span class="hljs-variable">$it</span>&quot;</span> &#125;<br>            .map &#123; SimpleGrantedAuthority(it) &#125;<br>            .toList())<br>        <span class="hljs-keyword">val</span> principal: UserDetails = User(<span class="hljs-keyword">annotation</span>.username, <span class="hljs-keyword">annotation</span>.password, authorities)<br>        <span class="hljs-keyword">val</span> auth: Authentication = TenantCaptchaAuthenticationToken(principal, <span class="hljs-keyword">annotation</span>.password, <span class="hljs-keyword">annotation</span>.tenant, <span class="hljs-string">&quot;&quot;</span>, authorities)<br>        context.authentication = auth<br>        <span class="hljs-keyword">return</span> context<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-meta">@SpringBootTest</span><br><span class="hljs-meta">@AutoConfigureMockMvc</span><br><span class="hljs-meta">@TestMethodOrder(OrderAnnotation::class)</span><br><span class="hljs-meta">@WithMockTenantUser(</span><br><span class="hljs-meta">    username = <span class="hljs-string">&quot;admin&quot;</span>,</span><br><span class="hljs-meta">    authorities = [<span class="hljs-string">&quot;sys:department:create&quot;</span>, <span class="hljs-string">&quot;sys:department:update&quot;</span>, <span class="hljs-string">&quot;sys:department:delete&quot;</span>, <span class="hljs-string">&quot;sys:department:list&quot;</span>, <span class="hljs-string">&quot;sys:department:page&quot;</span>, <span class="hljs-string">&quot;sys:department:tree&quot;</span>, <span class="hljs-string">&quot;sys:department:tree-root&quot;</span>, <span class="hljs-string">&quot;sys:department:id&quot;</span>]</span><br><span class="hljs-meta">)</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SysDepartmentControllerTest</span> &#123;<br><br>    <span class="hljs-meta">@Autowired</span><br>    <span class="hljs-keyword">lateinit</span> <span class="hljs-keyword">var</span> mockMvc: MockMvc<br><br>    <span class="hljs-meta">@Autowired</span><br>    <span class="hljs-keyword">lateinit</span> <span class="hljs-keyword">var</span> objectMapper: ObjectMapper<br><br>    <span class="hljs-meta">@Order(Integer.MIN_VALUE)</span><br>    <span class="hljs-meta">@Test</span><br>    <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">create</span><span class="hljs-params">()</span></span> &#123;<br>        mockMvc.post(<span class="hljs-string">&quot;/api/sys/department/create&quot;</span>) &#123;<br>            content = objectMapper.writeValueAsString(<br>                SysDepartmentCreateInput(<br>                    name = <span class="hljs-string">&quot;测试部门&quot;</span>,<br>                    description = <span class="hljs-string">&quot;test&quot;</span>,<br>                    sort = <span class="hljs-number">1</span>,<br>                    status = <span class="hljs-literal">true</span>,<br>                    parentId = <span class="hljs-number">1</span><br>                )<br>            )<br>            contentType = MediaType.APPLICATION_JSON<br>        &#125;<br>            .andExpect &#123;<br>                status &#123; isOk() &#125;<br>                content &#123;<br>                    jsonPath(<span class="hljs-string">&quot;$.success&quot;</span>) &#123;<br>                        exists()<br>                        value(<span class="hljs-literal">true</span>)<br>                    &#125;<br>                &#125;<br>            &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/SpringBoot/" class="print-no-link">#SpringBoot</a>
+      
+        <a href="/tags/SpringSecurity/" class="print-no-link">#SpringSecurity</a>
+      
+        <a href="/tags/Tenant/" class="print-no-link">#Tenant</a>
+      
+        <a href="/tags/Test/" class="print-no-link">#Test</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Spring-Security-Multi-Tenant-Test</div>
+      <div>https://zhengchalei.github.io/2024/08/16/Spring-Security-Multi-Tenant-Test/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>ZhengChaLei</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+<div style="width:100%;display:flex;justify-content:center;margin-bottom:1.5rem"><ins class="adsbygoogle" style="display:flex;justify-content:center;max-width:845px;width:100%;height:90px" data-ad-client="ca-pub-xxxxxx" data-ad-slot="yyyyyy"></ins><script> (adsbygoogle = window.adsbygoogle || []).push({}); </script></div>
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/08/22/Spring-Boot-Jackson-Time-Formater/" title="Spring-Boot-Jackson-Time-Formater">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Spring-Boot-Jackson-Time-Formater</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/11/Spring-Boot-Jdbc-AutoRowMapper/" title="Spring-Boot-Jdbc-AutoRowMapper">
+                        <span class="hidden-mobile">Spring-Boot-Jdbc-AutoRowMapper</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.8.0/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"a31d6f4444b05ddaea5e","clientSecret":"b8d683cc001df4fdf4f6d3c16740807b611bb8d6","repo":"zhengchalei.github.io","owner":"zhengchalei","admin":["zhengchalei"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token"},
+          {
+            id: 'aaa42b44fea02befb0a48a6e02a11145'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  var relativeDate = function() {
+    var updatedTime = document.getElementById('updated-time');
+    if (updatedTime) {
+      var text = updatedTime.textContent;
+      var reg = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})/;
+      var matchs = text.match(reg);
+      if (matchs) {
+        var relativeTime = moment(matchs[0]).fromNow();
+        updatedTime.textContent = text.replace(reg, relativeTime);
+      }
+      updatedTime.style.display = '';
+    }
+  };
+  Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/moment.min.js', function() {
+    if (!'zh-cn'.startsWith('en')) {
+      Fluid.utils.createScript('https://lib.baomitu.com/moment.js/2.29.4/locale/zh-cn.min.js', function() {
+        relativeDate();
+      });
+    } else {
+      relativeDate();
+    }
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1698240753235803" crossorigin="anonymous"></script>
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+<!-- hexo injector body_end start --><script src="/js/jquery.js"></script>
+  <script defer src="/js/duration.js"></script>
+
+  <script defer src="/js/expried.js"></script>
+<!-- hexo injector body_end end --></body>
+</html>
